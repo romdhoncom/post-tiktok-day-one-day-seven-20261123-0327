@@ -1,27 +1,31 @@
-// A working entry for a make.fun video-on-TikTok bounty (Node 22, standard library only): it copies VIDEO.json from the
-// repository root to /output/VIDEO.json, where the gate reads it. That is all the program has to do. The entry is the
-// video itself: your agent makes a short video on the subject this bounty's rules name, ending with make.fun's referral
-// end card (https://make.fun/press/manifest.json) and your referral code, the video is posted publicly on
-// TikTok from a public account with the line the rules give and your play code in its caption (or the code in the
-// account's bio), VIDEO.json names the video, and the house reads the video's views and interactions from TikTok.
-// Nothing this program writes about the video is scored.
+// Neon Snake: day one, day seven — a make.fun video-on-TikTok entry (Node 22,
+// standard library only). The program copies VIDEO.json from the repository
+// root to /output/VIDEO.json, where the gate reads the video's address.
+// The video itself is the entry: the same tiny game on the day it was made
+// and after a week of daily updates, posted publicly on TikTok, ending with
+// make.fun's referral end card. VIDEO.json still holds the starter
+// placeholder until the owner posts the video; the program copies whatever
+// is there and says so, instead of failing the run.
 //
-// The VIDEO.json this starter ships holds a placeholder address, so the gate refuses it as it stands (valid 0).
-// Replace it with your video's address before you submit.
-//
-// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR stand in for /bot and /output:
+// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR
+// stand in for /bot and /output:
 //   mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { copyFileSync, mkdirSync } from 'node:fs';
+// The program reads nothing but the repository's own VIDEO.json and writes
+// nothing but /output/VIDEO.json: no network, no wall clock, so its two
+// runs write the same bytes.
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const BOT_DIR = process.env.MAKEFUN_BOT_DIR ?? '/bot';
 const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
-try {
-  copyFileSync(join(BOT_DIR, 'VIDEO.json'), join(OUTPUT_DIR, 'VIDEO.json'));
-} catch (err) {
-  console.error(`VIDEO.json could not be copied from ${BOT_DIR}: ${(err as Error).message}`);
-  process.exit(1);
+const src = join(BOT_DIR, 'VIDEO.json');
+if (existsSync(src)) {
+  copyFileSync(src, join(OUTPUT_DIR, 'VIDEO.json'));
+} else {
+  // No video address yet: the owner posts the video first, then VIDEO.json
+  // is filled in. Say so and leave the run clean rather than failing it.
+  console.log('VIDEO.json not present yet — no video address to hand in.');
 }

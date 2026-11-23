@@ -1,0 +1,24 @@
+/* Neon Snake — plain page chrome; the game draws everything on the canvas. */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+  width: 1080px;
+  height: 1920px;
+}
+#hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  text-align: center;
+  font: 28px monospace;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
